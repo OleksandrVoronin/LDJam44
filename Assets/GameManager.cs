@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviour
     private GameObject[] _starSystemActives;
 
     [SerializeField]
+    private GameObject _inventoryView;
+
+    [SerializeField]
     private Image _fader;
     public Image Fader
     {
@@ -187,6 +190,15 @@ public class GameManager : MonoBehaviour
 
             _fader.DOFade(0, 0.2f).OnComplete(() => _fading = false);
         });
+    }
+
+    public void OpenInventory() {
+        _inventoryView.SetActive(true);
+    }
+
+    public void CloseInventory()
+    {
+        _inventoryView.SetActive(false);
     }
 
     public void SpendFuel(int amount, float time)
