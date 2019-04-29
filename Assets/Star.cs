@@ -26,16 +26,29 @@ public class Star : MonoBehaviour
         get => _planets;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private bool _entered;
+    public bool Entered
     {
-        _name = NameManager.Instance.GetStarSystemName();
-        gameObject.name = _name;
+        get { return _entered; }
+        set { _entered = value; }
+    }
+
+
+    public void Init()
+    {
+        if (NameManager.Instance != null)
+        {
+            _name = NameManager.Instance.GetStarSystemName();
+            gameObject.name = _name;
+        }
         _numberOfPlanets = Random.Range(1, 4);
+
+        bool hasInhabited = false;
 
         for (int i = 0; i < _numberOfPlanets; i++)
         {
-            _planets.Add(new PlanetInformation());
+            _planets.Add(new PlanetInformation(hasInhabited));
+            hasInhabited = hasInhabited || _planets[_planets.Count - 1].Inhabited;
         }
     }
 
@@ -54,20 +67,24 @@ public class Star : MonoBehaviour
 
         public int Mined;
 
-        public PlanetInformation()
+        public PlanetInformation(bool forceNotInhabited)
         {
-            PlanetType = (PlanetTypeEnum)Random.Range(0, 3);
-            ResourcesRich = PlanetType == PlanetTypeEnum.Inhabited ? 0 : Random.Range(0, 4);
+            PlanetType = (PlanetTypeEnum)Random.Range(0, forceNotInhabited ? 2 : 3);
+            ResourcesRich = PlanetType == PlanetTypeEnum.Inhabited ? 0 : Random.Range(1, 4);
             Variant = Random.Range(0, 100);
 
-            Name = NameManager.Instance.GetPlanetName();
+            if (NameManager.Instance != null)
+            {
+                Name = NameManager.Instance.GetPlanetName();
+            }
 
             Inhabited = (PlanetType == PlanetTypeEnum.Inhabited);
         }
 
         public string PlanetTypeString()
         {
-            switch (PlanetType) {
+            switch (PlanetType)
+            {
                 case PlanetTypeEnum.Gas:
                     return "Gas Giant";
 
@@ -82,7 +99,8 @@ public class Star : MonoBehaviour
             }
         }
 
-        public string ResourcesRichString() {
+        public string ResourcesRichString()
+        {
             switch (ResourcesRich)
             {
                 case 0:

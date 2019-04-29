@@ -47,7 +47,7 @@ public class InventoryView : MonoBehaviour
     public void UpdateView()
     {
         _fuelAmountText.text = "x" + GameManager.Instance.Fuel;
-        _provisioningAmountText.text = "x" + GameManager.Instance.Provisioning;
+        _provisioningAmountText.text = "x" + GameManager.Instance.Provision;
         _mineralsAmountText.text = "x" + GameManager.Instance.Minerals;
         _gasAmountText.text = "x" + GameManager.Instance.Gas;
 
@@ -57,7 +57,7 @@ public class InventoryView : MonoBehaviour
         _gasWeightText.text = "" + GameManager.Instance.GasWeight;
 
         _fuelTotalWeightText.text = "" + Mathf.Round(GameManager.Instance.FuelWeight * GameManager.Instance.Fuel);
-        _provisioningTotalWeightText.text = "" + Mathf.Round(GameManager.Instance.ProvisioningWeight * GameManager.Instance.Provisioning);
+        _provisioningTotalWeightText.text = "" + Mathf.Round(GameManager.Instance.ProvisioningWeight * GameManager.Instance.Provision);
         _mineralsTotalWeightText.text = "" + Mathf.Round(GameManager.Instance.MineralsWeight * GameManager.Instance.Minerals);
         _gasTotalWeightText.text = "" + Mathf.Round(GameManager.Instance.GasWeight * GameManager.Instance.Gas);
 
@@ -84,9 +84,9 @@ public class InventoryView : MonoBehaviour
 
     public void DumpProvisioning()
     {
-        if (GameManager.Instance.Provisioning > 0)
+        if (GameManager.Instance.Provision > 0)
         {
-            GameManager.Instance.Provisioning--;
+            GameManager.Instance.Provision--;
             UpdateView();
         }
     }

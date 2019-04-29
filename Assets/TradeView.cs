@@ -34,7 +34,7 @@ public class TradeView : MonoBehaviour
         if (GameManager.Instance.Minerals > 0)
         {
             GameManager.Instance.Minerals--;
-            GameManager.Instance.Provisioning += 3;
+            GameManager.Instance.Provision += 3;
             _inventoryView.UpdateView();
         }
     }
@@ -54,7 +54,7 @@ public class TradeView : MonoBehaviour
         if (GameManager.Instance.Gas > 0)
         {
             GameManager.Instance.Gas--;
-            GameManager.Instance.Provisioning += 2;
+            GameManager.Instance.Provision += 2;
             _inventoryView.UpdateView();
         }
     }

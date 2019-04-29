@@ -56,6 +56,10 @@ public class PlayerShipMover : MonoBehaviour
         {
             transform.rotation = new Quaternion();
             ShowMark();
+
+            if (transform.position == FindObjectOfType<StarGenerator>().GeneratedStars[FindObjectOfType<StarGenerator>().GeneratedStars.Count - 1].transform.position) {
+                GameManager.Instance.GameWon();
+            }
         });
 
     }

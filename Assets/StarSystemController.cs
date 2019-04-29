@@ -6,6 +6,7 @@ using DG.Tweening;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class StarSystemController : MonoBehaviour
 {
@@ -83,6 +84,20 @@ public class StarSystemController : MonoBehaviour
     private GameObject _MiningScreen;
     [SerializeField]
     private GameObject _InhabitedScreen;
+
+    [SerializeField]
+    private Image[] _planetBackgrounds;
+    [SerializeField]
+    private Image[] _planetAliens;
+
+    [SerializeField]
+    private Sprite[] _icePlanetBackgrounds;
+    [SerializeField]
+    private Sprite[] _gasPlanetBackgrounds;
+    [SerializeField]
+    private Sprite[] _terrestrialPlanetBackgrounds;
+    [SerializeField]
+    private Sprite[] _terrestrialPlanetAliens;
 
     // Start is called before the first frame update
     private void Awake()
@@ -188,8 +203,8 @@ public class StarSystemController : MonoBehaviour
         star.Planets[IndexOf(_planets, _selectedPlanet)].Scanned = true;
         ShowSelector(true, _animationSpeed);
 
-        GameManager.Instance.SpendFuel(1, 0.1f);
-        GameManager.Instance.SpendProvisioning(0, 0.1f);
+        GameManager.Instance.SpendFuel(0, 0f);
+        GameManager.Instance.SpendProvisioning(1, 0f);
     }
 
     public void Land()
@@ -202,6 +217,10 @@ public class StarSystemController : MonoBehaviour
                     _MiningScreen.SetActive(true);
                     _MiningScreen.GetComponent<MiningView>().Init(MiningView.MiningModeEnum.Gas, star.Planets[IndexOf(_planets, _selectedPlanet)]);
                     GameManager.Instance.Fader.DOFade(0, 0.2f);
+
+                    foreach (var bg in _planetBackgrounds) {
+                        bg.sprite = _gasPlanetBackgrounds[star.Planets[IndexOf(_planets, _selectedPlanet)].Variant % _gasPlanetBackgrounds.Length];
+                    }
                 });
                 break;
             case Star.PlanetInformation.PlanetTypeEnum.Minerals:
@@ -209,17 +228,32 @@ public class StarSystemController : MonoBehaviour
                     _MiningScreen.SetActive(true);
                     _MiningScreen.GetComponent<MiningView>().Init(MiningView.MiningModeEnum.Minerals, star.Planets[IndexOf(_planets, _selectedPlanet)]);
                     GameManager.Instance.Fader.DOFade(0, 0.2f);
+
+                    foreach (var bg in _planetBackgrounds)
+                    {
+                        bg.sprite = _icePlanetBackgrounds[star.Planets[IndexOf(_planets, _selectedPlanet)].Variant % _icePlanetBackgrounds.Length];
+                    }
                 });
                 break;
             case Star.PlanetInformation.PlanetTypeEnum.Inhabited:
                 GameManager.Instance.Fader.DOFade(1, 0.2f).OnComplete(() => {
                     _InhabitedScreen.SetActive(true);
+                    _InhabitedScreen.GetComponent<InhabitedView>().Init(star.Planets[IndexOf(_planets, _selectedPlanet)]);
                     GameManager.Instance.Fader.DOFade(0, 0.2f);
+
+                    foreach (var bg in _planetBackgrounds)
+                    {
+                        bg.sprite = _terrestrialPlanetBackgrounds[star.Planets[IndexOf(_planets, _selectedPlanet)].Variant % _terrestrialPlanetBackgrounds.Length];
+                    }
+                    foreach (var bg in _planetAliens)
+                    {
+                        bg.sprite = _terrestrialPlanetAliens[star.Planets[IndexOf(_planets, _selectedPlanet)].Variant % _terrestrialPlanetAliens.Length];
+                    }
                 });
                 break;
         }
 
-        GameManager.Instance.SpendFuel(2, 0.1f);
+        GameManager.Instance.SpendFuel(1, 0.1f);
         GameManager.Instance.SpendProvisioning(1, 0.1f);
     }
 
@@ -242,7 +276,7 @@ public class StarSystemController : MonoBehaviour
     {
         _selectionIndicator.DOFade(1, _animationSpeed).SetDelay(delay).OnStart(() =>
         {
-            if (star.Planets[IndexOf(_planets, _selectedPlanet)].Scanned)
+            if (star.Planets[IndexOf(_planets, _selectedPlanet)].Scanned || GameManager.Instance.LongRangeScan)
             {
                 _scanButton.DOFade(0, _animationSpeed);
 

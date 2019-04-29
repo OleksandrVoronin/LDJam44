@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using Sirenix.OdinInspector;
 using DG.Tweening;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -48,7 +49,7 @@ public class GameManager : MonoBehaviour
     private int _provisioning;
     [SerializeField]
     private TextMeshProUGUI _provisioningText;
-    public int Provisioning
+    public int Provision
     {
         get => _provisioning;
         set
@@ -68,63 +69,143 @@ public class GameManager : MonoBehaviour
         set
         {
             _catLives = value;
+
+            if(_catLives < 0)
+            {
+                _catLives = 0;
+                EndGame(GameOverReasonEnum.Lives);
+            }
+
             _catLivesText.text = "" + _catLives;
         }
     }
 
     [SerializeField]
     private int _minerals;
+    [SerializeField]
+    private TextMeshProUGUI _mineralsText;
     public int Minerals
     {
         get => _minerals;
         set
         {
             _minerals = value;
+            _mineralsText.text = "" + _minerals;
         }
     }
 
     [SerializeField]
     private int _gas;
+    [SerializeField]
+    private TextMeshProUGUI _gasText;
     public int Gas
     {
         get => _gas;
         set
         {
             _gas = value;
+            _gasText.text = "" + _gas;
         }
     }
 
     public float FuelWeight
     {
-        get => 0.6f;
+        get => 0.5f;
     }
 
     public float ProvisioningWeight
     {
-        get => 0.4f;
+        get => 0.3f;
     }
 
     public float MineralsWeight
     {
-        get => 1.5f;
+        get => 1f;
     }
 
     public float GasWeight
     {
-        get => 0.7f;
+        get => 0.6f;
     }
 
     [SerializeField]
     private float _shipMaxCapacity;
-    public float ShipMaxCapacity {
+    public float ShipMaxCapacity
+    {
         get => _shipMaxCapacity;
         set => _shipMaxCapacity = value;
     }
 
-    public float ShipCapacity {
-        get => Mathf.Round(FuelWeight * Fuel) + Mathf.Round(ProvisioningWeight * Provisioning) + Mathf.Round(MineralsWeight * Minerals) + Mathf.Round(GasWeight * Gas);
+    public float ShipCapacity
+    {
+        get => Mathf.Round(FuelWeight * Fuel) + Mathf.Round(ProvisioningWeight * Provision) + Mathf.Round(MineralsWeight * Minerals) + Mathf.Round(GasWeight * Gas);
     }
 
+
+    [SerializeField]
+    private Image[] _shipAppearances;
+    [SerializeField]
+    private Sprite[] _shipVariations;
+
+    private int _shipVariant = 0;
+    public int ShipVariant
+    {
+        get => _shipVariant;
+        set
+        {
+            _shipVariant = value;
+            foreach (var ship in _shipAppearances)
+            {
+                ship.sprite = _shipVariations[_shipVariant];
+            }
+        }
+    }
+
+    private int _combatAbility;
+    public int CombatAbility {
+        get => _combatAbility;
+        set => _combatAbility = value;
+    }
+
+    private int _evasion;
+    public int Evasion
+    {
+        get => _evasion;
+        set => _evasion = value;
+    }
+
+    private float _fuelConsumption;
+    public float FuelConsumption
+    {
+        get => _fuelConsumption;
+        set => _fuelConsumption = value;
+    }
+
+    private int _luck;
+    public int Luck {
+        get => _luck;
+        set => _luck = value;
+    }
+
+    public bool LongRangeScan = false;
+    public int ExtraMineralsMined = 0;
+    public int ExtraGasMined = 0;
+    public int ExtraLowerFuelConsumption = 0;
+
+    public PlayerShipMover PlayerShipMover;
+
+    [SerializeField]
+    private GameObject _gameOver;
+    [SerializeField]
+    private TextMeshProUGUI _gameOverText;
+
+    [SerializeField]
+    private GameObject _gameWon;
+
+    [SerializeField]
+    private GameObject _shipLost;
+
+    public enum GameOverReasonEnum { Fuel, Provision, Lives };
 
     // Start is called before the first frame update
     void Awake()
@@ -134,9 +215,14 @@ public class GameManager : MonoBehaviour
             Instance = this;
             SwitchToGlobalView();
 
-            CatLives = 9;
-            Provisioning = 30;
-            Fuel = 35;
+            CatLives = 8;
+            Provision = 0;
+            Fuel = 0;
+            Minerals = 0;
+            Gas = 0;
+
+            PlayerShipMover = FindObjectOfType<PlayerShipMover>();
+            Time.timeScale = 1;
         }
         else
         {
@@ -192,7 +278,8 @@ public class GameManager : MonoBehaviour
         });
     }
 
-    public void OpenInventory() {
+    public void OpenInventory()
+    {
         _inventoryView.SetActive(true);
     }
 
@@ -216,7 +303,8 @@ public class GameManager : MonoBehaviour
 
             if (Fuel < 0)
             {
-                Debug.Log("Fuel ran out!");
+                Fuel = 0;
+                EndGame(GameOverReasonEnum.Fuel);
             }
 
             yield return new WaitForSeconds(timeTick);
@@ -236,11 +324,12 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < amount; i++)
         {
-            Provisioning--;
+            Provision--;
 
-            if (Fuel < 0)
+            if (Provision < 0)
             {
-                Debug.Log("Provisioning ran out!");
+                Provision = 0;
+                EndGame(GameOverReasonEnum.Provision);
             }
 
             yield return new WaitForSeconds(timeTick);
@@ -249,5 +338,33 @@ public class GameManager : MonoBehaviour
         yield return null;
     }
 
+    public void EndGame(GameOverReasonEnum gameOverReasonEnum) {
+        _gameOver.SetActive(true);
 
+        Time.timeScale = 0;
+
+        if (gameOverReasonEnum == GameOverReasonEnum.Fuel)
+            _gameOverText.text = "You ran out of fuel.. Drifting through cold and empty space you find your doom.";
+
+        if (gameOverReasonEnum == GameOverReasonEnum.Provision)
+            _gameOverText.text = "You ran out of provision.. Drifting through cold and empty space you find your doom.";
+
+        if (gameOverReasonEnum == GameOverReasonEnum.Lives)
+            _gameOverText.text = "You ran out of lives.. It is over now.";
+    }
+
+    public void GameWon() {
+        _gameWon.SetActive(true);
+
+        Time.timeScale = 0;
+    }
+
+    public void RestartGame() {
+        Time.timeScale = 1;
+        SceneManager.LoadScene(0);
+    }
+
+    public void ShipLost() {
+        _shipLost.SetActive(true);
+    }
 }

@@ -104,6 +104,12 @@ public class StarSelector : MonoBehaviour
         {
             GameManager.Instance.SwitchToStarSystemView();
             StarSystemController.Instance.Randomize(_currentSelection.GetComponent<Star>());
+
+            if (!_currentSelection.GetComponent<Star>().Entered)
+            {
+                RandomEventMaster.Instance.RollEvent();
+                _currentSelection.GetComponent<Star>().Entered = true;
+            }
         }
         else
         {
@@ -116,8 +122,8 @@ public class StarSelector : MonoBehaviour
 
             _selectionBusy = true;
 
-            GameManager.Instance.SpendFuel((int) GetSelectionFuelCost(), 1.5f);
-            GameManager.Instance.SpendProvisioning((int) GetSelectionProvisioningCost(), 1.5f);
+            GameManager.Instance.SpendFuel((int)GetSelectionFuelCost(), 1.5f);
+            GameManager.Instance.SpendProvisioning((int)GetSelectionProvisioningCost(), 1.5f);
 
             ShowSelector(true, 2.6f);
         }
@@ -185,13 +191,13 @@ public class StarSelector : MonoBehaviour
     {
         float distance = (_currentSelection.transform.position - _playerShipMover.transform.position).magnitude;
 
-        return Mathf.Round(distance * 1f);
+        return Mathf.Round(distance * 1f * GameManager.Instance.FuelConsumption - GameManager.Instance.ExtraLowerFuelConsumption);
     }
 
     private float GetSelectionProvisioningCost()
     {
         float distance = (_currentSelection.transform.position - _playerShipMover.transform.position).magnitude;
 
-        return Mathf.Round(distance * 1f);
+        return Mathf.Round(distance * 0.5f);
     }
 }
