@@ -110,12 +110,12 @@ public class GameManager : MonoBehaviour
 
     public float FuelWeight
     {
-        get => 0.5f;
+        get => 0.3f;
     }
 
     public float ProvisioningWeight
     {
-        get => 0.3f;
+        get => 0.2f;
     }
 
     public float MineralsWeight
@@ -204,6 +204,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private GameObject _shipLost;
+
+    [SerializeField]
+    private GameObject _menuScreen;
 
     public enum GameOverReasonEnum { Fuel, Provision, Lives };
 
@@ -366,5 +369,9 @@ public class GameManager : MonoBehaviour
 
     public void ShipLost() {
         _shipLost.SetActive(true);
+    }
+
+    public void OpenMenu() {
+        _menuScreen.SetActive(true);
     }
 }

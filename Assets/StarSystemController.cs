@@ -99,6 +99,14 @@ public class StarSystemController : MonoBehaviour
     [SerializeField]
     private Sprite[] _terrestrialPlanetAliens;
 
+    [SerializeField]
+    private Sprite[] _starSprites;
+    [SerializeField]
+    private Color[] _starColors;
+
+    [SerializeField]
+    private SpriteRenderer _starSpriteRenderer;
+
     // Start is called before the first frame update
     private void Awake()
     {
@@ -168,6 +176,8 @@ public class StarSystemController : MonoBehaviour
         ActivePlanets = star.NumberOfPlanets;
 
         Random.InitState(star.Name.GetHashCode());
+
+//_starSpriteRenderer
 
         float _starRandomScaleFactor = Random.Range(_starSizeRandomRange.x, _starSizeRandomRange.y);
 

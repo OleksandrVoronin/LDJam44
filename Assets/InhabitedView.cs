@@ -119,13 +119,15 @@ public class InhabitedView : MonoBehaviour
         _minorGasCost.text = UpgradeManager.Instance.UpgradeList[minorUpgrade].GasCost + "";
 
         _minorButton.interactable = !UpgradeManager.Instance.IsUpgradeOwned[minorUpgrade] && UpgradeManager.Instance.CanPurchase(minorUpgrade);
-        if (UpgradeManager.Instance.CanPurchase(minorUpgrade))
+        if (UpgradeManager.Instance.IsUpgradeOwned[minorUpgrade])
         {
-            _minorButtonText.text = UpgradeManager.Instance.IsUpgradeOwned[minorUpgrade] ? "Owned" : "Purchase";
+            _minorButtonText.text = "Owned";
         }
-        else
+        else if (!UpgradeManager.Instance.CanPurchase(minorUpgrade))
         {
             _minorButtonText.text = "Insufficient Funds";
+        } else {
+            _minorButtonText.text = "Owned";
         }
 
         _minorIcon.sprite = UpgradeManager.Instance.UpgradeList[minorUpgrade].icon;

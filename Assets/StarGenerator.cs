@@ -78,15 +78,19 @@ public class StarGenerator : MonoBehaviour
                                                                             _gameBounds.y + y * stepY + (true ? Random.Range(_everyOtherOffset.x, _everyOtherOffset.y) : 0)), new Quaternion(), transform);
                 _generatedStars.Add(newStar);
 
-                newStar.GetComponent<Star>().Init();
+                Star star = newStar.GetComponent<Star>();
+
+                star.Init();
 
                 if (_generatedStars.Count == 1) // first sytem
                 {
-                    newStar.GetComponent<Star>().Planets[0].Inhabited = true;
-                    newStar.GetComponent<Star>().Planets[0].PlanetType = Star.PlanetInformation.PlanetTypeEnum.Inhabited;
-                    newStar.GetComponent<Star>().Planets[0].ResourcesRich = 0;
-                    newStar.GetComponent<Star>().Planets[0].Scanned = true;
-                    newStar.GetComponent<Star>().Planets[0].Variant = 0;
+                    star.Entered = true;
+
+                    star.Planets[0].Inhabited = true;
+                    star.Planets[0].PlanetType = Star.PlanetInformation.PlanetTypeEnum.Inhabited;
+                    star.Planets[0].ResourcesRich = 0;
+                    star.Planets[0].Scanned = true;
+                    star.Planets[0].Variant = 0;
                 }
             }
         }

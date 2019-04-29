@@ -10,7 +10,7 @@ public class ShipPurchase : MonoBehaviour
     };
 
     private int[] _maxCapacity = {
-        40, 50, 70
+        50, 60, 80
     };
 
     private int[] _combatAbility = {

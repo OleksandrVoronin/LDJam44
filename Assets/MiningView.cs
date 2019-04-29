@@ -61,8 +61,13 @@ public class MiningView : MonoBehaviour
         _planetInformation.ResourcesRich = (int)Mathf.Max(_planetInformation.ResourcesRich - 1, 0);
 
         if (_miningMode == MiningModeEnum.Minerals) {
-            GameManager.Instance.Minerals += resourcesMined + GameManager.Instance.ExtraMineralsMined;
-            _mineralsMinedText.text = "+" + (resourcesMined + GameManager.Instance.ExtraMineralsMined);
+            int resourcesMinedWithExtra = resourcesMined;
+            if(resourcesMined > 0) {
+                resourcesMinedWithExtra += GameManager.Instance.ExtraMineralsMined;
+            }
+
+            GameManager.Instance.Minerals += resourcesMinedWithExtra;
+            _mineralsMinedText.text = "+" + (resourcesMinedWithExtra);
 
             _canvasGroupMineralsMined.DOComplete();
             _canvasGroupMineralsMined.DOFade(1, 0.2f).OnComplete(() => _canvasGroupMineralsMined.DOFade(0, 0.1f));
@@ -74,8 +79,13 @@ public class MiningView : MonoBehaviour
 
         if (_miningMode == MiningModeEnum.Gas)
         {
-            GameManager.Instance.Gas += resourcesMined + GameManager.Instance.ExtraGasMined;
-            _gasMinedText.text = "+" + (resourcesMined + GameManager.Instance.ExtraGasMined);
+            int resourcesMinedWithExtra = resourcesMined;
+            if(resourcesMined > 0) {
+                resourcesMinedWithExtra += GameManager.Instance.ExtraGasMined;
+            }
+
+            GameManager.Instance.Gas += resourcesMinedWithExtra;
+            _gasMinedText.text = "+" + (resourcesMinedWithExtra);
 
             _canvasGroupGasMined.DOComplete();
             _canvasGroupGasMined.DOFade(1, 0.2f).OnComplete(() => _canvasGroupGasMined.DOFade(0, 0.1f));
